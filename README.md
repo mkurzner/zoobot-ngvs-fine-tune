@@ -1,17 +1,34 @@
-# ZooBot Fine-Tuning on NGVS Morphology Labels (Curated Example)
+# ZooBot Fine-Tuning on NGVS Morphology Labels (Curated Evaluation Example)
+This repository contains a curated example of transfer learning and model evaluation using a pretrained ZooBot convolutional neural network (CNN) applied to galaxy cutouts from the Next Generation Virgo Cluster Survey (NGVS).
 
-This repository contains  curated examplse of fine-tuning a pretrained ZooBot CNN on galaxy cutouts from the Next Generation Virgo Cluster Survey (NGVS), generating predictions, and inspecting model failure cases with goal of offering interpretaibltiy and high resolution learned morphologies for use with current and upcoming large galaxy surveys.
+The goal of this project is to demontrate an empirical evaluation workflow for image classifiers operating under:
+
+- Domain shift between pretraining and target data
+- Limited and noisy supervision, and
+- Heterogeneous real-world image quality.
+
+Emphasis is placed on failure-mode discovery, subgroup behavior, and confidence aware diagnostics, rather than on optimizing benchmark performance.
 
 ## What is included
+This repository demonstrated the following steps
+
 - Building a ZooBot-compatible `catalog` (`id_str`, `file_loc`, label columns)
 - Fine-tuning a pretrained CNN under domain shift and heterogeneous image quality
-- Saving predictions for reproducible downstream analysis
-- Qualitative error inspection (top/bottom confidence cases; incorrect vs correct)
+- Saving probabilistic predictions for reproducible downstream analysis
+- Qualitative failure inspection, inluding:
+   - High-confidence errors
+   - Top-confidence predictions (as a sanity check)
+   - Low-confidence and decision-boundary cases
+   - Subgroup slicing by morphological class
 
-## Contents
+All evaluation figures and tables are generated from commited prediction artifacts to ensure reproducibility.   
+
+## Repository Contents
 - `notebooks/ZooBotNGVS_Curated_Example.ipynb` — main workflow (end-to-end)
 - `outputs/figures/` — curated qualitative inspection figures
-- `outputs/tables/` — prediction CSVs and optional summary metrics
+- `outputs/tables/` — saved prediction CSV and lightweight quantitative summary
+
+Training and inference are not re-run in this notebook, however a sketch of how the training workflow was run is included for transparency.
 
 ## How I ran this notebook
 1. Created an environment with PyTorch + ZooBot dependencies.
@@ -20,10 +37,13 @@ This repository contains  curated examplse of fine-tuning a pretrained ZooBot CN
    - `CATALOG_CSV` (metadata + labels)
    - `CHECKPOINT_LOC` (pretrained ZooBot checkpoint)
 3. Run cells top-to-bottom. Predictions will be written to:
-   - `outputs/run_001/finetuned_predictions.csv`
-   - `outputs/run_001/figures/top_confidence.png`
-   - `outputs/run_001/figures/bottom_confidence.png`
+   - `outputs/finetuned_predictions.csv`
+   - `outputs/figures/top_confidence.png`
+   - `outputs/figures/bottom_confidence.png`
 
 ## Notes
 - Image data are not included in this repository. 
 - This is research code intended to highlight transparent evaluation and failure analysis rather than production deployment.
+
+## Why this matters for AI safety
+Although this project was conducted in an astronomical setting, the evaluation challenges mirror those faced in real-world ML deployments, e.g., limited labels, dataset shift, and the risk of confident but incorrect predictions. The diagnostic techniques demonstrated here are directly applicable to safety-critical ML systems where subgroup failures and miscalibration can lead to harmful downstream decisions.
